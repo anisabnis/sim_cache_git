@@ -482,7 +482,7 @@ class CacheGridReal():
 
         while i <= break_i:
 
-            if i >= 6:
+            if i >= 8:
                 break
 
             x1 = (int(vec[0])-i)%self.grid[0]
@@ -491,8 +491,11 @@ class CacheGridReal():
             y1 = (int(vec[1])-i)%self.grid[1]
             y2 = (int(vec[1])+i)%self.grid[1]
 
-            z1 = max(0, (int(vec[2])-i))
-            z2 = min((int(vec[2])+i),self.grid[2])
+            #z1 = max(0, (int(vec[2])-i))
+            #z2 = min((int(vec[2])+i),self.grid[2])
+
+            z1 = int(vec[2])
+            z2 = int(vec[2])
 
             a = i
             for x in range(int(vec[0])-i, int(vec[0]) + i + 1):
@@ -585,7 +588,7 @@ class CacheGridReal():
 
         while i <= break_i:
 
-            if i>=6:
+            if i>=8:
                 break
 
             x1 = (int(vec[0])-i)%self.grid[0]
@@ -596,6 +599,9 @@ class CacheGridReal():
 
             z1 = max(0, (int(vec[2])-i))
             z2 = min((int(vec[2])+i),self.grid[2])
+
+            #z1 = int(vec[2])
+            #z2 = int(vec[2])
 
             a = i
             for x in range(int(vec[0])-i, int(vec[0]) + i + 1):
@@ -660,6 +666,8 @@ class CacheGridReal():
             else:
                 return [c , first, False, False]
 
+
+        candidates = [x for x in candidates if x[2] == vec[2]]
         candidates = [dist(c, vec, break_i) for c in candidates]
 
         if len(candidates) == 0:

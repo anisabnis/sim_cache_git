@@ -101,7 +101,6 @@ class Simulator:
                     curr = self.cache.getCurrent()
 
                     f2 = open(str(self.grid_x) + '_' + str(self.learning_rate) + '_' + experiment_type +  '_' + file_name_extension + '_' + policy + "_" + v_id + '/' + str("cache_contents") + '.txt', 'w')                
-
                     content_cache = self.cache.obj_pos.printCacheContents(policy, curr, f2)
                     usefulness = self.cache.getUsefulness(policy, curr)
 
@@ -137,6 +136,7 @@ class Simulator:
                     updated_real_obj = False
                     [nearest_obj, dst, mapped_x, mapped_y] = self.cache.findNearestVirtual(pos)                                        
 
+                    #print("Nearest virtual object : ", nearest_obj, obj)
                     if nearest_obj != "Not found":
 
                         new_object_loc = self.descent.descent(nearest_obj, obj, "gaussian_real", policy)                
@@ -167,87 +167,47 @@ class Simulator:
                                     self.cache.updateRealObject(new_real_obj, i, policy, virtual_obj, orig_real_obj)
 
                         ## Find the nearest object in real cache
-                        [nearest_obj, dst, mapped_x, mapped_y] = self.cache.findNearestReal(pos) 
+                    [nearest_obj, dst, mapped_x, mapped_y] = self.cache.findNearestReal(pos) 
+                        #print("Nearest real object : ", nearest_obj, obj)
+                    z = np.random.random()                    
+                    if nearest_obj != "Not found":
+                        dst3 = l1_dist(nearest_obj, pos)
+                        
+                        if z <= epsilon * min(float(dst3)/Threshold, 1) and updated_real_obj == False:
 
-                        if nearest_obj != "Not found":
-                            z = np.random.random()                    
-                            dst3 = l1_dist(nearest_obj, pos)
-                    
-
-                            if z <= epsilon * min(float(dst3)/Threshold, 1) and updated_real_obj == False:
-
-                                self.cache.insert(obj, i, policy)
-                                nearest_object = pos
-                                dst3 = 0
-                                cost += Threshold_N
-                                evictions += 1
-
-
-                            if dst3 <= Threshold:
-
-                                if dst3 == 0:
-                                    cache_hits += 1
-                                else:
-                                    approximated += 1
-
-                                cost += dst3
-                            else:
-                                cache_misses += 1
-                                cost += Threshold_N
-
-                        elif z <= epsilon * min(float(1)/Threshold, 1) and updated_real_obj == False:
                             self.cache.insert(obj, i, policy)
                             nearest_object = pos
                             dst3 = 0
                             cost += Threshold_N
                             evictions += 1
-                
-                        else:
-                            cache_misses += 1
-                            cost += Threshold_N
-
-                    
-                    else:
-
-                        ## Find the nearest object in real cache
-                        [nearest_obj, dst, mapped_x, mapped_y] = self.cache.findNearestReal(pos) 
-
-                        if nearest_obj != "Not found":
-                            z = np.random.random()                    
-                            dst3 = l1_dist(nearest_obj, pos)
-                    
-                            if z <= epsilon * min(float(dst3)/Threshold, 1) and updated_real_obj == False:
-                                self.cache.insert(obj, i, policy)
-                                nearest_object = pos
-                                dst3 = 0
-                                cost += Threshold_N
-                                evictions += 1
 
 
-                            if dst3 <= Threshold:
-                                if dst3 == 0:
-                                    cache_hits += 1
-                                else:
-                                    approximated += 1
+                        if dst3 <= Threshold:
 
-                                cost += dst3
+                            if dst3 == 0:
+                                cache_hits += 1
                             else:
-                                cache_misses += 1
-                                cost += Threshold_N
-                
-                        elif z <= epsilon * min(float(1)/Threshold, 1) and updated_real_obj == False:
-
-                            self.cache.insert(obj, i, policy)
-                            nearest_object = pos
-                            dst3 = 0
-                            cost += Threshold_N
-                            evictions += 1            
-
+                                approximated += 1
+                                if updated_real_obj == False:
+                                    cost += dst3
                         else:
                             cache_misses += 1
+                            if updated_real_obj == False:
+                                cost += Threshold_N
+
+                    elif z <= epsilon * min(float(1)/Threshold, 1) and updated_real_obj == False:
+                        self.cache.insert(obj, i, policy)
+                        nearest_object = pos
+                        dst3 = 0
+                        if updated_real_obj == False:
                             cost += Threshold_N
-
-
+                        evictions += 1
+                
+                    else:
+                        cache_misses += 1
+                        if updated_real_obj == False:
+                            cost += Threshold_N
+                            
         
 s = Simulator(2, capacity, 100, 0.1, 100000000, 1, 0.1)
 s.simulate()                

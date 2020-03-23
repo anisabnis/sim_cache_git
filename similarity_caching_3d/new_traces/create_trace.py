@@ -37,6 +37,7 @@ for rep in range(40):
         for i in list(range(f_st, f_end+1)):
             start = start + time_inc
             x, y = convert_to_tile(lat, long, 5, 5)
+#            if i == 1:
             req = [start, i, eye, x, y]
             bisect.insort(trace, req)
 
