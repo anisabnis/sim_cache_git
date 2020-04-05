@@ -571,7 +571,7 @@ class CacheGridReal():
             return [best_candidate[0], best_candidate[1], best_candidate[2], best_candidate[3]]
 
         except Exception as e:
-            no_objects = self.obj_pos.printCacheContents()
+            #no_objects = self.obj_pos.printCacheContents()
             print(e)
             print(no_objects)
             sys.exit(0)
@@ -597,11 +597,11 @@ class CacheGridReal():
             y1 = (int(vec[1])-i)%self.grid[1]
             y2 = (int(vec[1])+i)%self.grid[1]
 
-            z1 = max(0, (int(vec[2])-i))
-            z2 = min((int(vec[2])+i),self.grid[2])
+            #z1 = max(0, (int(vec[2])-i))
+            #z2 = min((int(vec[2])+i),self.grid[2])
 
-            #z1 = int(vec[2])
-            #z2 = int(vec[2])
+            z1 = int(vec[2])
+            z2 = int(vec[2])
 
             a = i
             for x in range(int(vec[0])-i, int(vec[0]) + i + 1):

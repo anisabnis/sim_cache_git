@@ -43,7 +43,7 @@ class Simulator:
 
         self.learning_rate = learning_rate
 
-        os.system("mkdir " + str(self.grid_x) + "_" + str(learning_rate) + "_" + experiment_type + "_" + file_name_extension + "_" + policy + "_" + v_id + "_simple")        
+        os.system("mkdir " + str(self.grid_x) + "_" + str(learning_rate) + "_" + experiment_type + "_" + file_name_extension + "_" + policy + "_" + v_id + "_simple_no_update")        
         
         self.cache_capacity = capacity
 
@@ -68,7 +68,8 @@ class Simulator:
 
         jump_interval = 1000
 
-        f = open(str(self.grid_x) + '_' + str(self.learning_rate) + '_' + experiment_type +  '_' + file_name_extension + '_' + policy + "_" + v_id + "_simple" +'/' + str("objective") + '.txt', 'w')                
+        f = open(str(self.grid_x) + '_' + str(self.learning_rate) + '_' + experiment_type +  '_' + file_name_extension + '_' + policy + "_" + v_id + "_simple_no_update" +'/' + str("objective") + '.txt', 'w')                
+
         cost = 0
 
         Threshold = 1 ## Decide a value
@@ -80,7 +81,6 @@ class Simulator:
         cache_misses = 0
         approximated = 0
                      
-        seq = 0
         for i in range(1, self.iter):
 
             if i - prev_i >= jump_interval:
@@ -99,15 +99,11 @@ class Simulator:
                     elif i == 100 * jump_interval:
                         jump_interval *= 10
 
-
                     curr = self.cache.getCurrent()
 
-                    f2 = open(str(self.grid_x) + '_' + str(self.learning_rate) + '_' + experiment_type +  '_' + file_name_extension + '_' + policy + "_" + v_id + '_' + "simple" +'/' + str("cache_contents_") + str(seq) + '.txt', 'w')                
+                    f2 = open(str(self.grid_x) + '_' + str(self.learning_rate) + '_' + experiment_type +  '_' + file_name_extension + '_' + policy + "_" + v_id + '_' + "simple_no_update" +'/' + str("cache_contents") + '.txt', 'w')                
 
-                    seq += 1
                     content_cache = self.cache.obj_pos.printCacheContents(policy, curr, f2)
-
-                    f2.close()
 
                     self.write_stat(f, i, objective_value, content_cache, cache_hits, approximated, cache_misses)
 
@@ -140,13 +136,14 @@ class Simulator:
 
 
                     if nearest_obj != "Not found":
-                        self.cache.updateVirtualObjectAndFreq(nearest_obj, nearest_obj, mapped_x, mapped_y, i, policy, round(float(dst),2), reset_interval, pos, Threshold)
+                        #self.cache.updateVirtualObjectAndFreq(nearest_obj, nearest_obj, mapped_x, mapped_y, i, policy, round(float(dst),2), reset_interval, pos, Threshold)
 
                         dst3 = l1_dist(nearest_obj, pos)
                         if dst3 <= Threshold:
                             cost += dst3
                             if dst3 == 0:
                                 cache_hits += 1
+                                self.cache.updateVirtualObjectAndFreq(nearest_obj, nearest_obj, mapped_x, mapped_y, i, policy, round(float(dst),2), reset_interval, pos, Threshold)
                             else:
                                 approximated += 1
                         else:

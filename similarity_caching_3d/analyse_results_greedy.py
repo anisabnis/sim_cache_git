@@ -23,7 +23,7 @@ max_x = 21
 max_y = 21
 
     #f = open("traces/trace_" + v_id + ".txt", "r")
-f = open(c_size + "_" + "cache_contents.txt", "r")
+f = open(c_size + "_" + "content.txt", "r")
 for l in f:
     l = l.strip().split(" ")
     z = int(float(l[2]))

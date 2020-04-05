@@ -8,7 +8,7 @@ import random
 MISS = 8
 APPROX = 1
 
-TRACE = "new_traces/trace_14_Warship_shuffle1.txt"
+TRACE = "new_traces/trace_14_Warship_shuffle_norepeat.txt"
 CSIZE = int(sys.argv[1])
 
 score_list = []
@@ -87,6 +87,8 @@ def costC():
     pass
     
 
+cache = []
+
 cost_savings = 0
 for i in range(CSIZE):
 
@@ -96,6 +98,9 @@ for i in range(CSIZE):
     max_sc = score_list[-1]
     x,y,z  = score_map[max_sc][0]
     I[x][y][z] = 1
+
+    cache.append([x,y,z])
+
     score_list = score_list[:-1]
     score_map[max_sc] = [u for u in score_map[max_sc] if u != [x,y,z]]
 
@@ -113,6 +118,13 @@ cost_save_per_req = float(cost_savings)/total_reqs
 
 f = open(str(CSIZE) + ".txt", "w")
 f.write(str(MISS - cost_save_per_req))
+f.close()
+
+f = open(str(CSIZE) + "_content.txt", "w")
+for c in cache:
+    f.write(str(c[0]) + " " + str(c[1]) + " " + str(c[2]) + "\n")
+f.close()
+
     
     
     

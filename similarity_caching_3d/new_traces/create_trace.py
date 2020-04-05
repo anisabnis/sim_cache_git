@@ -8,7 +8,7 @@ filename = sys.argv[2]
 
 trace = []
 
-for rep in range(40):
+for rep in range(10):
 
     f = open(eye + "/" + filename + "_fixations.csv", "r")
     f.readline()    
@@ -44,7 +44,7 @@ for rep in range(40):
 
 random.shuffle(trace)
 
-f = open("trace_" + str(filename) + "_shuffle.txt", "w")
+f = open("trace_" + str(filename) + "_shuffle_norepeat.txt", "w")
 for t in trace:
     f.write(" ".join([str(x) for x in t]))
     f.write("\n")

@@ -1,4 +1,3 @@
-
 import argparse
 import copy
 import os
@@ -14,6 +13,7 @@ reset_interval = int(sys.argv[2])
 file_name_extension = sys.argv[4]
 capacity = int(file_name_extension)
 v_id = sys.argv[5]
+jump = float(sys.argv[6])
 
 if policy == "dual" or policy == "fifo" or policy == "lru":
     from cacheGrid3d import *
@@ -44,12 +44,12 @@ class Simulator:
 
         self.learning_rate = learning_rate
 
-        os.system("mkdir " + str(self.grid_x) + "_" + str(learning_rate) + "_" + experiment_type + "_" + file_name_extension + "_" + policy + "_" + v_id)                
+        os.system("mkdir " + str(self.grid_x) + "_" + str(learning_rate) + "_" + experiment_type + "_" + file_name_extension + "_" + policy + "_" + v_id + "_" + str(jump))                
         self.cache_capacity = capacity
 
 
-    def write_stat(self, f,  i, objective_value, content_cache, evictions, cache_misses, usefulness, cache_hits, approximated):
-        f.write(str(i) + " " + str(objective_value) + " " + str(content_cache) + " " + str(evictions) + " " + str(cache_misses) + " " + str(usefulness) + " " + str(cache_hits) + " " + str(approximated))
+    def write_stat(self, f,  i, objective_value, content_cache, evictions, cache_misses, usefulness, cache_hits, approximated, no_fetches):
+        f.write(str(i) + " " + str(objective_value) + " " + str(content_cache) + " " + str(evictions) + " " + str(cache_misses) + " " + str(usefulness) + " " + str(cache_hits) + " " + str(approximated) + " " + str(no_fetches))
         f.write("\n")
         f.flush()
 
@@ -61,14 +61,14 @@ class Simulator:
         objective = [] 
         objective_value = 0
 
-        epsilon = 0.1
+        epsilon = jump
         
         count = 0
         prev_i = 0
 
-        jump_interval = 1000
+        jump_interval = 2000
 
-        f = open(str(self.grid_x) + '_' + str(self.learning_rate) + '_' + experiment_type +  '_' + file_name_extension + '_' + policy + "_" + v_id + '/' + str("objective") + '.txt', 'w')                
+        f = open(str(self.grid_x) + '_' + str(self.learning_rate) + '_' + experiment_type +  '_' + file_name_extension + '_' + policy + "_" + v_id + "_" + str(jump) + '/' + str("objective") + '.txt', 'w')                
         cost = 0
         evictions = 0
         cache_misses = 0
@@ -78,8 +78,11 @@ class Simulator:
         Threshold = 1 ## Decide a value
         Threshold_N = 8
 
+        no_fetches = 0
+
         cache_initialized = False
                      
+        seq = 0
         for i in range(1, self.iter):
 
             if i - prev_i >= jump_interval:
@@ -100,11 +103,13 @@ class Simulator:
 
                     curr = self.cache.getCurrent()
 
-                    f2 = open(str(self.grid_x) + '_' + str(self.learning_rate) + '_' + experiment_type +  '_' + file_name_extension + '_' + policy + "_" + v_id + '/' + str("cache_contents") + '.txt', 'w')                
+                    f2 = open(str(self.grid_x) + '_' + str(self.learning_rate) + '_' + experiment_type +  '_' + file_name_extension + '_' + policy + "_" + v_id + "_" + str(jump) + '/' + str("cache_contents_") + str(seq) + '.txt', 'w')                
                     content_cache = self.cache.obj_pos.printCacheContents(policy, curr, f2)
+                    f2.close()
+                    seq += 1
                     usefulness = self.cache.getUsefulness(policy, curr)
 
-                    self.write_stat(f, i, objective_value, content_cache, evictions, cache_misses, usefulness, cache_hits, approximated)
+                    self.write_stat(f, i, objective_value, content_cache, evictions, cache_misses, usefulness, cache_hits, approximated, no_fetches)
 
                     cost = 0
 #                    cache_misses = 0
@@ -158,13 +163,15 @@ class Simulator:
                             if dist < dst2:
                                 check_if_in_real_cache = (obj[0] == mapped_real_object[0] and obj[1] == mapped_real_object[1] and obj[2] == mapped_real_object[2])
                                 z = np.random.random()                    
-                                if check_if_in_real_cache == False and z < 0.1:
+                                if check_if_in_real_cache == False:# and z < 0.1:
                                     cost += Threshold_N
                                     new_real_obj = obj
                                     virtual_obj = new_object_loc                            
                                     orig_real_obj = mapped_real_object                                    
                                     updated_real_obj = True
                                     self.cache.updateRealObject(new_real_obj, i, policy, virtual_obj, orig_real_obj)
+                                    no_fetches += 1
+
 
                         ## Find the nearest object in real cache
                     [nearest_obj, dst, mapped_x, mapped_y] = self.cache.findNearestReal(pos) 
@@ -172,30 +179,29 @@ class Simulator:
                     z = np.random.random()                    
                     if nearest_obj != "Not found":
                         dst3 = l1_dist(nearest_obj, pos)
-                        
-                        if z <= epsilon * min(float(dst3)/Threshold, 1) and updated_real_obj == False:
-
-                            self.cache.insert(obj, i, policy)
-                            nearest_object = pos
-                            dst3 = 0
-                            cost += Threshold_N
-                            evictions += 1
-
 
                         if dst3 <= Threshold:
-
                             if dst3 == 0:
                                 cache_hits += 1
                             else:
                                 approximated += 1
+
                                 if updated_real_obj == False:
                                     cost += dst3
                         else:
                             cache_misses += 1
+                            if z <= epsilon and updated_real_obj == False:
+                                self.cache.insert(obj, i, policy)
+                                nearest_object = pos
+                                dst3 = 0
+                                cost += Threshold_N
+                                evictions += 1
+                                updated_real_obj = True
                             if updated_real_obj == False:
                                 cost += Threshold_N
 
-                    elif z <= epsilon * min(float(1)/Threshold, 1) and updated_real_obj == False:
+                    elif z <= epsilon and updated_real_obj == False:
+                    #elif z <= epsilon * min(float(1)/Threshold, 1) and updated_real_obj == False:
                         self.cache.insert(obj, i, policy)
                         nearest_object = pos
                         dst3 = 0
@@ -209,7 +215,7 @@ class Simulator:
                             cost += Threshold_N
                             
         
-s = Simulator(2, capacity, 100, 0.1, 100000000, 1, 0.1)
+s = Simulator(2, capacity, 100, 0.1, 100000000, 1, 0.0)
 s.simulate()                
 
 

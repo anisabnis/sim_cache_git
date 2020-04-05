@@ -6,7 +6,9 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 from matplotlib.colors import BoundaryNorm
 
-for d in ["20_0.05_cache_real_2000_dual_14_Warship_0.1", "20_0.05_cache_real_4000_dual_14_Warship_0.1", "20_0.05_cache_real_6000_dual_14_Warship_0.1", "20_0.05_cache_real_8000_dual_14_Warship_0.1", "20_0.05_cache_real_10000_dual_14_Warship_0.1", "20_0.05_cache_real_12000_dual_14_Warship_0.1"]:
+#for d in ["20_0.05_cache_real_2000_dual_14_Warship_0.1", "20_0.05_cache_real_4000_dual_14_Warship_0.1", "20_0.05_cache_real_6000_dual_14_Warship_0.1", "20_0.05_cache_real_8000_dual_14_Warship_0.1", "20_0.05_cache_real_10000_dual_14_Warship_0.1", "20_0.05_cache_real_12000_dual_14_Warship_0.1"]:
+for d in ["20_0.01_cache_real_2000_lru_14_Warship_simple", "20_0.01_cache_real_4000_lru_14_Warship_simple", "20_0.01_cache_real_6000_lru_14_Warship_simple", "20_0.01_cache_real_8000_lru_14_Warship_simple", "20_0.01_cache_real_10000_lru_14_Warship_simple", "20_0.01_cache_real_12000_lru_14_Warship_simple"]:
+
 
     keyword = d.split("_")[4]
     for ite in [30, 60, 90]:
@@ -51,7 +53,7 @@ for d in ["20_0.05_cache_real_2000_dual_14_Warship_0.1", "20_0.05_cache_real_400
         arr_y = np.array(arr_y)
         cmap = plt.get_cmap('hsv')
         plt.pcolormesh(arr_x, arr_z, intensity, cmap=cmap)
-        plt.savefig(str(ite) + "_" +  keyword + "_Xs.png")
+        plt.savefig(str(ite) + "_" +  keyword + "LRU_Xs.png")
         
         
         intensity = np.zeros((max_z, max_y ))
@@ -67,4 +69,4 @@ for d in ["20_0.05_cache_real_2000_dual_14_Warship_0.1", "20_0.05_cache_real_400
         cmap = plt.get_cmap('hsv')
     # Construct 2D histogram from data using the 'plasma' colormap
         plt.pcolormesh(arr_y, arr_z, intensity, cmap=cmap)
-        plt.savefig(str(ite) + "_" + keyword + "_Ys.png")
+        plt.savefig(str(ite) + "_" + keyword + "LRU_Ys.png")

@@ -11,7 +11,7 @@ no_requests = defaultdict(lambda : 0)
 exp_trace = sys.argv[1]
 c_size = int(sys.argv[2])
 
-f = open("new_traces/trace_" + str(exp_trace) + "_shuffle1.txt", "r")
+f = open("new_traces/trace_" + str(exp_trace) + "_shuffle1_norepeat.txt", "r")
 
 T = 8
 A = 1
@@ -43,12 +43,6 @@ for l in f:
     neighbours = [[-1,0, 0], [1, 0, 0], [0, -1, 0], [0, 1, 0]]
     for n in neighbours:
         if z + n[2] >= 502 or z + n[2] < 0:
-            continue
-
-        if x + n[0] >= 20 or x + n[0] < 0:
-            continue
-
-        if y + n[1] >= 20 or y + n[1] < 0:
             continue
 
         tile = str((x + n[0])%20) + "." + str((y + n[1])%20) + "." + str((z + n[2]))
@@ -120,7 +114,6 @@ for i in range(c_size):
     n_x = no_requests[req_tile]
     #Recompute the scores of the neighbouring tiles
     neighbours = [[-1,0, 0], [1, 0, 0], [0, -1, 0], [0, 1, 0]]
-    neighbours.extend([[-2,0, 0], [2, 0, 0], [0, -2, 0], [0,2, 0]])
 
     
     for n in neighbours :
@@ -128,13 +121,6 @@ for i in range(c_size):
         if z + n[2] >= 502 or z + n[2] < 0:
             continue
 
-        if x + n[0] >= 20 or x + n[0] < 0:
-            continue
-
-        if y + n[1] >= 20 or y + n[1] < 0:
-            continue
-
- 
         n_tile = str((x + n[0])%20) + "." + str((y + n[1])%20) + "." + str(z + n[2])
         
         if n_tile in cost_reduction:
@@ -153,38 +139,31 @@ for i in range(c_size):
             cost_reduction[n_tile] = n_score_update
 
 
-#         x1, y1, z1 = [int(m) for m in n_tile.split(".")]
+        x1, y1, z1 = [int(m) for m in n_tile.split(".")]
+        
+        for n2 in neighbours :
 
-#         for n2 in neighbours :
+            if z1 + n2[2] >= 502 or z1 + n2[2] < 0:
+                continue
 
-#             if z1 + n2[2] >= 502 or z1 + n2[2] < 0:
-#                 continue
+            n2_tile = str((x1 + n2[0])%20) + "." + str((y1 + n2[1])%20) + "." + str(z1 + n2[2])
 
-#             if x1 + n[0] >= 20 or x1 + n[0] < 0:
-#                 continue
-            
-#             if y1 + n[1] >= 20 or y1 + n[1] < 0:
-#                 continue
+            if n2_tile in cost_reduction:
 
+                curr_score = cost_reduction[n2_tile]                    
+                del score_list[bisect.bisect_left(score_list, curr_score)]
+                score_map[curr_score] = [u for u in score_map[curr_score] if u != n2_tile]            
 
-#             n2_tile = str((x1 + n2[0])%20) + "." + str((y1 + n2[1])%20) + "." + str(z1 + n2[2])
+                if len(score_map[curr_score]) == 0:
+                    del score_map[curr_score]
 
-#             if n2_tile in cost_reduction:
+                new_score = cost_reduction[n2_tile] - (T-A)*n_y
+                cost_reduction[n2_tile] = new_score
 
-#                 curr_score = cost_reduction[n2_tile]                    
-#                 del score_list[bisect.bisect_left(score_list, curr_score)]
-#                 score_map[curr_score] = [u for u in score_map[curr_score] if u != n2_tile]            
+                #print("2. Reassigning score of : ", n2_tile, curr_score, new_score)
 
-#                 if len(score_map[curr_score]) == 0:
-#                     del score_map[curr_score]
-
-#                 new_score = cost_reduction[n2_tile] - (T-A)*n_y
-#                 cost_reduction[n2_tile] = new_score
-
-#                 #print("2. Reassigning score of : ", n2_tile, curr_score, new_score)
-
-#                 bisect.insort(score_list, new_score)
-#                 score_map[new_score].append(n2_tile)                    
+                bisect.insort(score_list, new_score)
+                score_map[new_score].append(n2_tile)                    
                     
 f1.close()
 
