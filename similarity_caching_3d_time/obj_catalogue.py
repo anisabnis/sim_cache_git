@@ -6,7 +6,7 @@ class ObjectCatalogueGrid3d:
         self.dim_y = dim_y
         self.dim_z = dim_z
         #self.trace_f = open("traces/trace_" + filename + ".txt", "r")
-        self.trace_f = open("new_traces/trace_" + filename + "_7_GazaFishermen_shuffle_cyclic_mix.txt" , "r")
+        self.trace_f = open("new_traces/trace_" + filename + "_shuffle_norepeat_2.txt" , "r")
        
     def getRequest(self):
         req = self.trace_f.readline()

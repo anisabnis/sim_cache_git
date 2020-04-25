@@ -41,7 +41,7 @@ for rep in range(1):
             bisect.insort(trace, req)
 
 
-#random.shuffle(trace)
+random.shuffle(trace)
 
 f = open("trace_" + str(filename) + "_shuffle_cyclic.txt", "w")
 for i in range(30):

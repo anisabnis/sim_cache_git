@@ -14,6 +14,7 @@ file_name_extension = sys.argv[4]
 capacity = int(file_name_extension)
 v_id = sys.argv[5]
 jump = float(sys.argv[6])
+l_rate = float(sys.argv[7])
 
 if policy == "dual" or policy == "fifo" or policy == "lru":
     from cacheGrid3d import *
@@ -24,7 +25,7 @@ else:
 class Simulator:
     def __init__(self, dim, capacity, no_objects, alpha, iter, update_interval, learning_rate):
 
-        self.grid_x = 120
+        self.grid_x = 20
 
         self.grid_y = 20
 
@@ -217,7 +218,7 @@ class Simulator:
                             cost += Threshold_N
                             
         
-s = Simulator(2, capacity, 100, 0.1, 100000000, 1, 0.05)
+s = Simulator(2, capacity, 100, 0.1, 100000000, 1, l_rate)
 s.simulate()                
 
 

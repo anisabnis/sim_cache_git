@@ -13,11 +13,11 @@ lru_dual = []
 sizes=[2000, 4000, 6000, 8000, 10000, 12000]
 
 for s in sizes:
-    #for eps in [0.1]:
+    for eps in [1.0]:
     #for eps in [0.1, 0.2, 0.3, 0.4, 0.5, 1.0]:
-    for eps in [0.1, 0.2, 0.4, 0.6, 0.8, 1.0]:
+    #for eps in [0.1, 0.2, 0.4, 0.6, 0.8, 1.0]:
         print("20_0.05_cache_real_" + str(s) + "_dual_14_Warship_" + str(eps))
-        f5 = open("20_0.05_cache_real_" + str(s) + "_dual_14_Warship_" + str(eps) + "/objective.txt", "r")
+        f5 = open("20_0.0_cache_real_" + str(s) + "_lru_14_Warship_" + str(eps) + "/objective.txt", "r")
         i = 0
         first = False
         scores = []

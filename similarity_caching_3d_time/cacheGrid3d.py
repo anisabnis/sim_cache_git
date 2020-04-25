@@ -491,11 +491,11 @@ class CacheGridReal():
             y1 = (int(vec[1])-i)%self.grid[1]
             y2 = (int(vec[1])+i)%self.grid[1]
 
-            #z1 = max(0, (int(vec[2])-i))
-            #z2 = min((int(vec[2])+i),self.grid[2])
+            z1 = max(0, (int(vec[2])-i))
+            z2 = min((int(vec[2])+i),self.grid[2])
 
-            z1 = int(vec[2])
-            z2 = int(vec[2])
+            #z1 = int(vec[2])
+            #z2 = int(vec[2])
 
             a = i
             for x in range(int(vec[0])-i, int(vec[0]) + i + 1):
@@ -602,11 +602,11 @@ class CacheGridReal():
             y1 = (int(vec[1])-i)%self.grid[1]
             y2 = (int(vec[1])+i)%self.grid[1]
 
-            #z1 = max(0, (int(vec[2])-i))
-            #z2 = min((int(vec[2])+i),self.grid[2])
+            z1 = max(0, (int(vec[2])-i))
+            z2 = min((int(vec[2])+i),self.grid[2])
 
-            z1 = int(vec[2])
-            z2 = int(vec[2])
+            #z1 = int(vec[2])
+            #z2 = int(vec[2])
 
             a = i
             for x in range(int(vec[0])-i, int(vec[0]) + i + 1):
@@ -656,9 +656,9 @@ class CacheGridReal():
             i += 1
 
         def dist(c, v, break_i):
-            first = np.linalg.norm((np.array(c[:2])-np.array(v[:2])), ord=1)
+            first = np.linalg.norm((np.array(c[:2])-np.array(v[:2])), ord=1) + 1 * abs(v[2] - c[2])
             if first > 4 * break_i:
-                mapped_points = self.get_mapped_points(c)
+                mapped_points = self.get_mapped_points(c) 
                 mapped = [(c, np.linalg.norm((np.array(c[:2])-np.array(v[:2])), ord=1) + 1 * abs(v[2] - c[2])) for c in mapped_points]
                 best = min(mapped, key=operator.itemgetter(1))                
                 if best[0][0] == mapped_points[0][0] and best[0][1] == mapped_points[0][1] and best[0][2] == mapped_points[0][2]:

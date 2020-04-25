@@ -12,12 +12,14 @@ sgd = defaultdict(lambda : [])
 lru_dual = []
 sizes=[2000, 4000, 6000, 8000, 10000, 12000]
 
+eps = 0.1
 for s in sizes:
-    #for eps in [0.1]:
+    #for lr in [0.1, 0.15, 0.2, 0.25, 0.3, 0.5]:
+    for lr in [0.01, 0.02, 0.001, 0.05]:
     #for eps in [0.1, 0.2, 0.3, 0.4, 0.5, 1.0]:
-    for eps in [0.1, 0.2, 0.4, 0.6, 0.8, 1.0]:
-        print("20_0.05_cache_real_" + str(s) + "_dual_14_Warship_" + str(eps))
-        f5 = open("20_0.05_cache_real_" + str(s) + "_dual_14_Warship_" + str(eps) + "/objective.txt", "r")
+    #for eps in [0.1, 0.2, 0.4, 0.6, 0.8, 1.0]:
+        print("20_" + str(lr) + "_cache_real_" + str(s) + "_dual_14_Warship_" + str(eps))
+        f5 = open("20_" + str(lr) + "_cache_real_" + str(s) + "_dual_14_Warship_" + str(eps) + "/objective.txt", "r")
         i = 0
         first = False
         scores = []
@@ -39,7 +41,7 @@ for s in sizes:
         total_req = req_no - first_req
         avg = sum(scores)
         avg = float(avg)/(i-10)
-        sgd[eps].append(avg)
+        sgd[lr].append(avg)
 
         
     i = 0

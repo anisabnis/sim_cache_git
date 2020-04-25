@@ -31,7 +31,7 @@ class StochasticGradientDescent:
 
         d = derivative_l1(nearest_object, current_object)
         #n = nearest_object - self.alpha * d
-        n = np.array([nearest_object[0] - self.alpha * d[0], nearest_object[1] - self.alpha * d[1], nearest_object[2]])
+        n = np.array([nearest_object[0] - self.alpha * d[0], nearest_object[1] - self.alpha * d[1], nearest_object[2] - self.alpha * d[2]])
 
         try:
             n[0] = n[0]%self.grid[0]

@@ -23,7 +23,7 @@ else:
 class Simulator:
     def __init__(self, dim, capa, no_objects, alpha, iter, update_interval, learning_rate):
 
-        self.grid_x = 120
+        self.grid_x = 20
 
         self.grid_y = 20
 
@@ -103,6 +103,7 @@ class Simulator:
                     curr = self.cache.getCurrent()
 
                     f2 = open(str(self.grid_x) + '_' + str(self.learning_rate) + '_' + experiment_type +  '_' + file_name_extension + '_' + policy + "_" + v_id + '_' + "simple" +'/' + str("cache_contents_") + str(seq) + '.txt', 'w')                
+
                     seq += 1
                     content_cache = self.cache.obj_pos.printCacheContents(policy, curr, f2)
 
@@ -136,6 +137,7 @@ class Simulator:
 
                     ## Find the nearest object in real cache
                     [nearest_obj, dst, mapped_x, mapped_y] = self.cache.findNearestReal(pos) 
+
 
                     if nearest_obj != "Not found":
                         self.cache.updateVirtualObjectAndFreq(nearest_obj, nearest_obj, mapped_x, mapped_y, i, policy, round(float(dst), 3), reset_interval, pos, Threshold)

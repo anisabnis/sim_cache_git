@@ -8,14 +8,13 @@ import random
 MISS = 8
 APPROX = 1
 
-#TRACE = "new_traces/trace_14_Warship_shuffle_cyclic.txt"
-TRACE = "new_traces/trace_14_Warship_7_GazaFishermen_shuffle_cyclic_mix.txt"
+TRACE = "new_traces/trace_14_Warship_shuffle_norepeat_2.txt"
 CSIZE = int(sys.argv[1])
 
 score_list = []
 score_map = defaultdict(lambda : [])
 
-neighbours = [[-1, 0, 0], [1, 0, 0], [0, -1, 0], [0, 1, 0]]
+neighbours = [[-1, 0, 0], [1, 0, 0], [0, -1, 0], [0, 1, 0], [0, 0, 1], [0, 0, -1]]
 
 ## Cost benefit provided by the tile
 C = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 0)))
@@ -44,7 +43,10 @@ for l in f:
     for n in neighbours:
         x_n = (x + n[0])%20
         y_n = (y + n[1])%20
-        z_n = z
+        z_n = (z + n[2])
+        
+        if z_n > 502 or z_n < 0:
+            continue
         C[x_n][y_n][z_n] += (MISS - APPROX)
         
 f.close()
@@ -74,7 +76,11 @@ def recompute_scores(x, y, z):
         cost += APPROX * N[x][y][z]
 
     for n in neighbours:
-        x1, y1, z1 = (x + n[0])%20, (y + n[1])%20, z
+        x1, y1, z1 = (x + n[0])%20, (y + n[1])%20, z + n[2]
+        
+        if z_1 > 502 or z_1 < 0:
+            continue
+
         if A[x1][y1][z1] != 1 and I[x1][y1][z1] != 1:
             cost += (MISS - APPROX) * N[x1][y1][z1]
 
@@ -108,11 +114,19 @@ for i in range(CSIZE):
     cost_savings += max_sc
 
     for n in neighbours:
-        x1, y1, z1 = (x + n[0])%20, (y + n[1])%20, z
+        x1, y1, z1 = (x + n[0])%20, (y + n[1])%20, z + n[2]
+
+        if z_1 > 502 or z_1 < 0:
+            continue
+
         A[x1][y1][z1] = 1
         recompute_scores(x1, y1, z1)
+
         for nn in neighbours:
-            x2, y2, z2 = (x1 + nn[0])%20, (y1 + nn[1])%20, z
+            x2, y2, z2 = (x1 + nn[0])%20, (y1 + nn[1])%20, z1 + nn[2]            
+
+            if z_2 > 502 or z_2 < 0:
+                continue
             recompute_scores(x2, y2, z2)
 
 cost_save_per_req = float(cost_savings)/total_reqs
